@@ -4,6 +4,14 @@ import hashlib
 import tempfile
 import difflib
 
+#boilerplate metadata block
+__author__ = "Far McKon"
+__copyright__ = "Copyright 2011, Far McKon Light Industries"
+__license__ = "GPL"
+__version__ = "1.0.1.0"
+__maintainer__ = "Far McKon"
+__email__ = "FarMcKon@gmail.com"
+
 pagewatch_list_filename =	os.path.expanduser("~/.pagewatch/watchlist.txt")
 pagewatch_old_data_dir =	os.path.expanduser("~/.pagewatch/old_pages")
 
