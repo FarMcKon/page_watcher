@@ -51,9 +51,13 @@ def wget(url, filename=None):
 	returns None, or the temp filename used to store the data
 	""" 
 	import urllib2
-	opener1 = urllib2.build_opener()
-	page1 = opener1.open(url)
-	data = page1.read()
+	try:
+		opener1 = urllib2.build_opener()
+		page1 = opener1.open(url)
+		data = page1.read()
+	except Exception:
+		print "wget fail"
+		return None 
 	
 	tmp_filename = filename
 	if(tmp_filename == None):
@@ -112,7 +116,7 @@ def run_check():
 		#wget that url to a tmp file
 		tmp_filename = wget(url)
 		if(tmp_filename == None):
-			print "fail to fetch " , url ," (tmp_filename " , tmp_filename ,")"
+			print "run_check fail to fetch " , url ," (tmp_filename " , tmp_filename ,")"
 			return False
 
 		#if new md5 != md5 in file line
@@ -145,6 +149,10 @@ def add_page( url ):
 	# wget the url
 	print "getting url ", url
 	tmp_filename = wget(url)
+	if(tmp_filename == None):
+		print "add_page, fail to fetch " , url ," (tmp_filename " , tmp_filename ,")"
+		return False
+
 	md5 = md5sum(tmp_filename)
 	print "content md5 ", sum
 	#check if we can drop a tmpfile in there
@@ -170,8 +178,12 @@ if __name__ == "__main__":
 	if( len(sys.argv) < 2):
 		#print "looking for changes"
 		diffsDir = run_check()
+		if( diffsDir == False):
+			print "Error in checking the pages available. "
+			exit(-1)
 		if( diffsDir == None) :
-			"no changes. poo :( "
+			print "No changes detected, nothing to report  "
+			exit(0)
 		else:
 			print "We found ", len(diffsDir), " changes in files"
 	
