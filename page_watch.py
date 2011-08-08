@@ -3,6 +3,12 @@ import os
 import hashlib
 import tempfile
 import difflib
+"""
+This file contains a simple program to store a list of static webpages, 
+and ot fetch them to check for differences since the first save. It uses a 
+linux style .pagewatch directionr in the users home dir in order to save
+the list of files and cached origional version.
+"""
 
 #boilerplate metadata block
 __author__ = "Far McKon"
@@ -34,7 +40,9 @@ def dircheck_and_create(dirname):
 	return True	
 	
 def filecheck_and_create(filename):
-	if( not os.path.isfile(filename) ):
+	""" takes a file name and checks if it exists, or if it needs
+		to be created, prompts user for creation
+	"""	if( not os.path.isfile(filename) ):
 		var = raw_input("May we create " + filename  +" file for you (yes/no)?")
 		if(var == 'y' or var == 'yes' or var == 'Y' ):
 			open(filename, 'w').close() 
@@ -47,7 +55,7 @@ def filecheck_and_create(filename):
 	return True
 	
 def wget(url, filename=None):
-	""" Fetches a url wget style. if filename is not specified, a safe tmpfile is created.
+	""" Fetches a url wget style. if filename is not specified, a tmpfile is created.
 	returns None, or the temp filename used to store the data
 	""" 
 	import urllib2
@@ -69,7 +77,10 @@ def wget(url, filename=None):
 	return tmp_filename
 	
 def md5sum(fileName, excludeLine="", includeLine=""):
-    """Compute md5 hash of the specified file"""
+    """Compute md5 hash of the specified file. exclude line is a 
+    pattern that is use to discard any line that starts iwth that pattern,
+    include line is concatenated to to end of the passed file before an md5 is created
+    """
     #thanks to http://thejaswihr.blogspot.com/2008/06/python-md5-checksum-of-file.html 
     # for this function
     m = hashlib.md5()
@@ -88,8 +99,10 @@ def md5sum(fileName, excludeLine="", includeLine=""):
     return m.hexdigest()
 
 def run_check():
-	""" Checks the url watchlist for changes. If untested, returns 'False' if a test was performed
-	otherwise returns a dict of text of diff's"""
+	""" Checks the url watchlist for changes. 
+	returns 'False' if a test was not performed
+	otherwise returns a dict of text of diff's, 
+	None is a valid value indicating tests were run, but no differnece were found"""
 	diffsDir = {}
 	
 	check_file = pagewatch_list_filename
@@ -146,6 +159,9 @@ def run_check():
 
 #pagewatch_add
 def add_page( url ):
+	""" This funciton adds a page to the pagewatch list,
+	and caches the baseline version of that page for future diffs
+	"""
 	# wget the url
 	print "getting url ", url
 	tmp_filename = wget(url)
@@ -171,6 +187,9 @@ def add_page( url ):
 	list_fh.close()
 	
 if __name__ == "__main__":
+	"""
+	Standard main function, only runs if the module was called from the commnad line
+	"""
 	print " Pagewatch to the rescue!"
 	#print sys.argv
 
